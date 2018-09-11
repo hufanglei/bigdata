@@ -4,6 +4,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.DistributedFileSystem;
+import org.apache.hadoop.hdfs.protocol.DatanodeInfo;
 import org.apache.hadoop.io.IOUtils;
 import org.junit.Test;
 
@@ -30,5 +32,28 @@ public class HDFSDemo {
         OutputStream output = new FileOutputStream("d:\\temp\\xyz.tar.gz");
         //使用工具类
         IOUtils.copyBytes(input, output, 1024);
+    }
+
+    @Test
+    public void testDataNode()  throws Exception{
+        //获取DataNode的信息（伪分布的环境）
+        //指定当前的Hadoop的用户
+        System.setProperty("HADOOP_USER_NAME", "root");
+
+        //配置参数：指定NameNode地址
+        Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", "hdfs://192.168.157.111:9000");
+
+        //创建一个HDFS客户端
+        //FileSystem client = FileSystem.get(conf);
+        DistributedFileSystem fs = (DistributedFileSystem) FileSystem.get(conf);
+        //获取数据节点的信息: Stats ---> 统计信息
+        DatanodeInfo[] list = fs.getDataNodeStats();
+        for(DatanodeInfo info:list){
+            System.out.println(info.getHostName()+"\t"+ info.getName());
+        }
+
+        fs.close();
+
     }
 }
