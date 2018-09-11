@@ -1,9 +1,7 @@
 package big0903;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.hdfs.protocol.DatanodeInfo;
 import org.apache.hadoop.io.IOUtils;
@@ -11,6 +9,7 @@ import org.junit.Test;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 public class HDFSDemo {
 
@@ -55,5 +54,33 @@ public class HDFSDemo {
 
         fs.close();
 
+    }
+
+    @Test
+    public void testFileBlockLocation() throws Exception{
+        //获取数据块的信息
+        //指定当前的Hadoop的用户
+        System.setProperty("HADOOP_USER_NAME", "root");
+
+        //配置参数：指定NameNode地址
+        Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", "hdfs://192.168.157.111:9000");
+
+        //创建一个客户端
+        FileSystem client = FileSystem.get(conf);
+
+        //获取文件的status信息
+        FileStatus fileStatus = client.getFileStatus(new Path("/folder111/a.tar.gz"));
+
+        //获取文件的数据块信息（数组）
+        BlockLocation[] locations = client.getFileBlockLocations(fileStatus, 0, fileStatus.getLen());
+        /*
+         * 伪分布的环境，数据块的冗余度是：1
+         */
+        for(BlockLocation blk:locations){
+            System.out.println(Arrays.toString(blk.getHosts()) + "\t" + Arrays.toString(blk.getNames()));
+        }
+
+        client.close();
     }
 }
