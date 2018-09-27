@@ -18,6 +18,9 @@ public class SalaryTotalMain {
 		job.setMapperClass(SalaryTotalMapper.class);
 		job.setMapOutputKeyClass(IntWritable.class);
 		job.setMapOutputValueClass(IntWritable.class);
+
+		//指定自己的比较规则
+		job.setSortComparatorClass(MyNumberComparator.class);
 		
 		//3��ָ�������reducer��reducer���������
 		job.setReducerClass(SalaryTotalReducer.class);
