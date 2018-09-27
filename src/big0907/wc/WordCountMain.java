@@ -23,6 +23,8 @@ public class WordCountMain {
         job.setMapOutputKeyClass(Text.class);  //k2的数据类型
         job.setMapOutputValueClass(IntWritable.class);  //v2的类型
 
+        job.setCombinerClass(WordCountReducer.class);
+
         //3、指定任务的reduce和reduce的输出数据的类型
         job.setReducerClass(WordCountReducer.class);
         job.setOutputKeyClass(Text.class); //k4的类型
