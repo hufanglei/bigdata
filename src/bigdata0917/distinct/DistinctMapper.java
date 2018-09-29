@@ -17,6 +17,6 @@ public class DistinctMapper extends Mapper<LongWritable, Text, Text, NullWritabl
         String[] words = data.split(",");
 
         //输出：把职位job作为key2
-        context.write(new Text(words[2]), NullWritable.get());
+        context.write(new Text(words[2]+" "+ words[3]), NullWritable.get());
     }
 }
